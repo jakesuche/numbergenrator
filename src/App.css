@@ -1,0 +1,105 @@
+
+/* @font-face {
+  font-family: 'BR Firma';
+  src: local('Br Firma'), url('./assets/fonts/BRFirmaBlack.otf') format('opentype');
+}
+@font-face {
+  font-family: 'BR Firma ';
+  src: local('Br Firma') url('./assets/fonts/BRFirmaBold.otf') format('opentype');
+}
+
+
+@font-face {
+  font-family: 'BR Firma';
+  src: local('Br Firma') url('./assets/fonts/BRFirmaMedium.otf') format('opentype')
+}
+
+
+@font-face {
+  font-family: 'BR Firma ';
+  src: local('Br Firma') url('./assets/fonts/BRFirmaExtraLight.otf') format('opentype');
+  font-weight: lighter;
+  
+}
+@font-face {
+  font-family: 'BR Firma ';
+  src: local('Br Firma2') url('./assets/fonts/BRFirmaRegular.otf') format('opentype')
+}
+
+@font-face {
+  font-family: 'BR Firma ';
+  src: local('Br Firma') url('./assets/fonts/BRFirmaThin.otf') format('opentype')
+}
+
+@font-face {
+  font-family: 'BR Firma ';
+  src: local('Br Firma') url('./assets/fonts/BRFirmaLight.otf') format('opentype')
+}
+
+@font-face {
+  font-family: 'BR Firma lighter';
+  src: local('Br Firma') url('./assets/fonts/BRFirmaExtraLight.otf') format('opentype');
+  font-weight:100;
+  
+} */
+@import url('http://fonts.cdnfonts.com/css/myriad-pro');
+@import url('http://fonts.cdnfonts.com/css/br-firma');
+
+
+
+.App {
+  text-align: center;
+  
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+body::-webkit-scrollbar {
+  width: 1em;
+}
+ 
+body::-webkit-scrollbar-track {
+  background:#3f4d5952;
+}
+ 
+body::-webkit-scrollbar-thumb {
+  background-color: #3f4d59;
+  outline: 1px solid slategrey;
+}
+
+
+
+
+

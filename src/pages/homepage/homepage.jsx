@@ -1,6 +1,16 @@
 import "./homepage.css";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  root: {
+    width: "100%",
+  },
+  container: {
+    maxHeight: 440,
+  },
+});
 
 const Homepage = () => {
   const [inputData, addInput] = useState({
@@ -11,8 +21,8 @@ const Homepage = () => {
   });
 
   const [inputNumber, increaseNumber] = useState(0);
-  const [ winningNumber, setWinning] = useState([])
-  const [winningSets, setSets] = useState([])
+  const [winningNumber, setWinning] = useState([]);
+  const [winningSets, setSets] = useState([]);
 
   useEffect(() => {}, []);
 
@@ -30,16 +40,16 @@ const Homepage = () => {
   const handleDraw = ($event) => {
     $event.preventDefault();
     console.log("butttoncclick");
-    const URL = "http://192.168.100.106:5000/playlottery";
+    const URL = "https://random-lottery-service23.herokuapp.com/playlottery";
 
     axios
       .post(URL, inputData)
       .then((res) => {
         console.log(res);
-        setWinning(res.data['winningNumbers'])
+        setWinning(res.data["winningNumbers"]);
         setTimeout(() => {
-          setSets(res.data['drawedSets'])
-          console.log(res.data['drawedSets'])
+          setSets(res.data["drawedSets"]);
+          console.log(res.data["drawedSets"]);
         }, 2000);
       })
       .catch((err) => {
@@ -172,31 +182,40 @@ const Homepage = () => {
 
       <div className="row mb-4 mt-4">
         <div className="col-md-12 mb-5">
-          <table className="winning">
-            <tr>
-              <th colSpan="2">Winning numbers</th>
-            </tr>
-            <tr>
-              {
-                winningNumber.map((res,i)=>{
-                  return(
-                    <td key={i}> {res}</td>
-              
-                  )
-                })
-              }
-              
-            </tr>
-            
-          </table>
+          <h3 className="text-center">Winning numbers</h3>
+        </div>
+        <div className="col-md-12">
+          <div className="d-flex justify-content-center">
+            {winningNumber.map((res, i) => {
+              return (
+                <div
+                  key={i}
+                  style={{
+                    paddingLeft: "10px",
+                  }}
+                >
+                  {res}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       <div className="row mb-4 mt-5">
-          
+      {winningSets.map((res, i) => {
+          return (
+            <div key={i} className=" d-flex justify-content-start">
+              <div className="serial-header">serial: {res.serial}</div>
+              <div className="d-flex justify-content-start">
+                {res.numbers.map((res, i) => {
+                  return <div key={i - 1}>{res}</div>;
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
-
-    
     </div>
   );
 };

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.4",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -19,6 +20,7 @@
     "react-preloaders": "^3.0.3",
     "react-scripts": "4.0.1",
     "react-slick": "^0.28.1",
+    "react-table": "^7.7.0",
     "react-toastify": "^7.0.4",
     "slick-carousel": "^1.8.1",
     "spinners-react": "^1.0.4",

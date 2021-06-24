@@ -1,16 +1,7 @@
 import "./homepage.css";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles({
-  root: {
-    width: "100%",
-  },
-  container: {
-    maxHeight: 440,
-  },
-});
 
 const Homepage = () => {
   const [inputData, addInput] = useState({
@@ -19,10 +10,14 @@ const Homepage = () => {
     numDraws: null,
     playPrice: null,
   });
-
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postPerPage, setPostPerPage] = useState(20);
   const [inputNumber, increaseNumber] = useState(0);
   const [winningNumber, setWinning] = useState([]);
   const [winningSets, setSets] = useState([]);
+  const [matchCount2, setMatchCount] = useState({});
+  const [winMatch, setWinMatch] = useState({});
 
   useEffect(() => {}, []);
 
@@ -37,24 +32,104 @@ const Homepage = () => {
     }
   };
 
-  const handleDraw = ($event) => {
-    $event.preventDefault();
-    console.log("butttoncclick");
-    const URL = "https://random-lottery-service23.herokuapp.com/playlottery";
 
+
+  const handleDraw = (e) => {
+    setLoading(true);
+    e.preventDefault();
+    console.log("button click");
+    const URL = "http://localhost:5000/playlottery";
     axios
       .post(URL, inputData)
-      .then((res) => {
-        console.log(res);
-        setWinning(res.data["winningNumbers"]);
+      .then(({ data }) => {
+        console.log(data);
+
+        const { drawedSets, winningNumbers } = data;
+        // set winningNumbers set
+        setWinning(winningNumbers);
+        setSets(drawedSets);
+        console.log(data);
+        checkMatches(data);
+        let matchCount = countMatches(data);
+        setMatchCount({ ...matchCount2, ...matchCount });
+
+        /// loop through matchCount
+        var loopData = "";
+        let class1 = "class";
+        for (var match in matchCount) {
+          console.log(match);
+          loopData += `<li ${class1}="list-group-item">${match} : ${matchCount[match]}</li>`;
+        }
+        setMatchCount({ loopData });
+
+        console.log(matchCount);
+        addInput({ ...inputData, matchCount });
+
         setTimeout(() => {
-          setSets(res.data["drawedSets"]);
-          console.log(res.data["drawedSets"]);
-        }, 2000);
+          console.log(inputData);
+          axios
+            .post(`http://localhost:5000/winPrices`, inputData)
+            .then(({ data }) => {
+              console.log(data);
+              const { winPerMatch } = data;
+
+              setLoading(false);
+              var loopData1 = "";
+              console.log("winPerMatch", winPerMatch);
+              for (var win in winPerMatch) {
+                console.log(win);
+                loopData1 += `<li ${class1}="list-group-item">${win} : ${winPerMatch[win]}</li>`;
+              }
+              setWinMatch({ loopData1 });
+            })
+            .catch((err) => {
+              console.log(err);
+              setLoading(false);
+            });
+        }, 1000);
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response);
+        setLoading(false);
       });
+  };
+
+  const checkMatches = (drawData) => {
+    const { winningNumbers, drawedSets } = drawData;
+
+    for (var set of drawedSets) {
+      set.match = 0;
+      for (var num of set.numbers) {
+        if (winningNumbers.includes(num)) {
+          set.match++;
+        }
+      }
+    }
+  };
+
+  const countMatches = (drawData) => {
+    const { winningNumbers, drawedSets } = drawData;
+    const numAmount = winningNumbers.length;
+    const matchCount = {};
+    for (var i = 0; i <= numAmount; i++) {
+      matchCount[`Match${i}`] = 0;
+    }
+    for (var set of drawedSets) {
+      matchCount[`Match${set.match}`]++;
+    }
+
+    return matchCount;
+  };
+
+  // handle pagination
+
+  const handlePagination = (e) => {
+    if (e.target.name === "button1") {
+      setCurrentPage(currentPage - 1);
+    }
+    if (e.target.name === "button2") {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const updateAtrribute = (elem, attributes) => {
@@ -63,7 +138,11 @@ const Homepage = () => {
     }
   };
   const numberArray = [...Array(inputNumber).keys()];
-
+  // Get current posts
+  const indexOfLastPost = currentPage * postPerPage;
+  const indexOfFirstPost = indexOfLastPost - postPerPage;
+  const currentPosts = winningSets.slice(indexOfFirstPost, indexOfLastPost);
+  console.log(currentPosts);
   return (
     <div className="container container-wrapper">
       <div className="row mt-5">
@@ -176,6 +255,13 @@ const Homepage = () => {
             className="btn btn-primary"
           >
             Play Now
+            {loading ? (
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            ) : (
+              ""
+            )}
           </button>
         </div>
       </div>
@@ -202,20 +288,77 @@ const Homepage = () => {
         </div>
       </div>
 
-      <div className="row mb-4 mt-5">
-      {winningSets.map((res, i) => {
-          return (
-            <div key={i} className=" d-flex justify-content-start">
-              <div className="serial-header">serial: {res.serial}</div>
-              <div className="d-flex justify-content-start">
-                {res.numbers.map((res, i) => {
-                  return <div key={i - 1}>{res}</div>;
-                })}
-              </div>
-            </div>
-          );
-        })}
+      <div className="row">
+        <div className="col-md-6">
+          <table class="table mb-4">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Serial</th>
+                <th scope="col">Numbers</th>
+                <th scope="col">Match</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentPosts.map((res, i) => {
+                return (
+                  <tr key={i}>
+                    <th scope="row">{i}</th>
+                    <td>{res["serial"]}</td>
+                    <td>
+                      {res.numbers.map((num) => {
+                        return <td>{num}</td>;
+                      })}
+                    </td>
+                    <td>{res["match"]}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li className="page-item">
+                <a
+                  type="button"
+                  onClick={handlePagination}
+                  name="button1"
+                  className="page-link"
+                >
+                  Previous
+                </a>
+              </li>
+
+              <li className="page-item">
+                <a
+                  type="button"
+                  name="button2"
+                  onClick={handlePagination}
+                  className="page-link"
+                  disabled={currentPage === 1}
+                >
+                  Next
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div className="col-md-3 mb-5">
+          <h1>Match Count</h1>
+          <ul
+            className="list-group"
+            dangerouslySetInnerHTML={{ __html: matchCount2["loopData"] }}
+          ></ul>
+        </div>
+        <div className="col-md-3 mb-5">
+          <h1>Winnings</h1>
+          <ul
+            className="list-group"
+            dangerouslySetInnerHTML={{ __html: winMatch["loopData1"] }}
+          ></ul>
+        </div>
       </div>
+
     </div>
   );
 };

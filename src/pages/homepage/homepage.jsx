@@ -12,14 +12,16 @@ const Homepage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postPerPage, setPostPerPage] = useState(20);
+  const [postPerPage, setPostPerPage] = useState(10);
   const [inputNumber, increaseNumber] = useState(0);
   const [winningNumber, setWinning] = useState([]);
   const [winningSets, setSets] = useState([]);
   const [matchCount2, setMatchCount] = useState({});
   const [winMatch, setWinMatch] = useState({});
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    
+  }, []);
 
   const handleChange = ($event) => {
     const { value, name } = $event.target;
@@ -42,13 +44,13 @@ const Homepage = () => {
     axios
       .post(URL, inputData)
       .then(({ data }) => {
-        console.log(data);
+       // console.log(data);
 
         const { drawedSets, winningNumbers } = data;
         // set winningNumbers set
         setWinning(winningNumbers);
         setSets(drawedSets);
-        console.log(data);
+        //console.log(data);
         checkMatches(data);
         let matchCount = countMatches(data);
         setMatchCount({ ...matchCount2, ...matchCount });
@@ -57,16 +59,16 @@ const Homepage = () => {
         var loopData = "";
         let class1 = "class";
         for (var match in matchCount) {
-          console.log(match);
+          //console.log(match);
           loopData += `<li ${class1}="list-group-item">${match} : ${matchCount[match]}</li>`;
         }
         setMatchCount({ loopData });
 
-        console.log(matchCount);
+       // console.log(matchCount);
         addInput({ ...inputData, matchCount });
 
         setTimeout(() => {
-          console.log(inputData);
+          //console.log(inputData);
           axios
             .post(`http://localhost:5000/winPrices`, inputData)
             .then(({ data }) => {
@@ -77,7 +79,7 @@ const Homepage = () => {
               var loopData1 = "";
               console.log("winPerMatch", winPerMatch);
               for (var win in winPerMatch) {
-                console.log(win);
+                //console.log(win);
                 loopData1 += `<li ${class1}="list-group-item">${win} : ${winPerMatch[win]}</li>`;
               }
               setWinMatch({ loopData1 });
@@ -256,8 +258,8 @@ const Homepage = () => {
           >
             Play Now
             {loading ? (
-              <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
+              <div className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
               </div>
             ) : (
               ""
@@ -290,10 +292,10 @@ const Homepage = () => {
 
       <div className="row">
         <div className="col-md-6">
-          <table class="table mb-4">
-            <thead class="thead-dark">
+          <table className="table mb-4">
+            <thead className="thead-dark">
               <tr>
-                <th scope="col">#</th>
+                
                 <th scope="col">Serial</th>
                 <th scope="col">Numbers</th>
                 <th scope="col">Match</th>
@@ -303,11 +305,11 @@ const Homepage = () => {
               {currentPosts.map((res, i) => {
                 return (
                   <tr key={i}>
-                    <th scope="row">{i}</th>
+                    
                     <td>{res["serial"]}</td>
                     <td>
                       {res.numbers.map((num) => {
-                        return <td>{num}</td>;
+                        return <span>{num},</span>;
                       })}
                     </td>
                     <td>{res["match"]}</td>
@@ -317,7 +319,7 @@ const Homepage = () => {
             </tbody>
           </table>
           <nav aria-label="Page navigation example">
-            <ul class="pagination">
+            <ul className="pagination">
               <li className="page-item">
                 <a
                   type="button"
@@ -342,6 +344,11 @@ const Homepage = () => {
               </li>
             </ul>
           </nav>
+          <div className=" d-flex justify-content-left">
+              <div>
+                {`${(winningSets.length > 0 ? indexOfFirstPost + postPerPage : 0 )} of ${winningSets.length}`}
+              </div>
+          </div>
         </div>
         <div className="col-md-3 mb-5">
           <h1>Match Count</h1>

@@ -28,7 +28,7 @@ const Homepage = () => {
     addInput({ ...inputData, [name]: value });
 
     const WinCat = document.getElementById("win-category");
-
+    // set loop for setting numArray
     if ($event.target.name === "numAmount") {
       increaseNumber(Number($event.target.value));
     }
